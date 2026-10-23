@@ -1,0 +1,76 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: hospital_postgres
+    environment:
+      POSTGRES_DB: hospital_management
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - hospital_network
+
+  # Backend Python API
+  backend:
+    build:
+      context: ./backend-python
+      dockerfile: Dockerfile
+    container_name: hospital_backend
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/hospital_management
+      - HMS_JWT_SECRET=${HMS_JWT_SECRET:-super_secret_jwt_key_at_least_32_characters_long_for_hms_auth_token_issuance}
+      - TOOL_EXECUTION_MODE=guarded
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - hospital_network
+    restart: unless-stopped
+    volumes:
+      - pdf_uploads:/app/uploads
+      - medical_knowledge_db:/app/medical_knowledge_db
+
+  # Frontend React Application
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: hospital_frontend
+    environment:
+      - VITE_CLAUDE_API_KEY=${VITE_CLAUDE_API_KEY:-}
+      - VITE_OPENAI_API_KEY=${VITE_OPENAI_API_KEY:-}
+      - VITE_GROQ_API_KEY=${VITE_GROQ_API_KEY:-}
+      - VITE_GOOGLE_API_KEY=${VITE_GOOGLE_API_KEY:-}
+      - VITE_MCP_BRIDGE_URL=http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - hospital_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  pdf_uploads:
+    driver: local
+  medical_knowledge_db:
+    driver: local
+
+networks:
+  hospital_network:
+    driver: bridge
