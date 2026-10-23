@@ -1,0 +1,246 @@
+# ================================
+# NODE.JS / FRONTEND
+# ================================
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Build outputs
+dist/
+build/
+.vite/
+frontend/dist/
+frontend/build/
+frontend/.vite/
+
+# ================================
+# ENVIRONMENT VARIABLES & CONFIG
+# ================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+frontend/.env
+backend/.env
+backend-python/.env
+backend-python/credentials.json
+
+
+# ================================
+# PYTHON / BACKEND
+# ================================
+# Python virtual environments
+hospital_env/
+venv/
+.venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+.Python
+
+# Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.py[cod]
+*$py.class
+*.so
+
+# Python distributions / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Python testing
+.tox/
+.nox/
+.coverage
+.pytest_cache/
+htmlcov/
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# ================================
+# DATABASE & DATA
+# ================================
+*.sqlite3
+*.db
+chroma_db/
+backend-python/chroma_db/
+backend-python/data/
+backend-python/uploads/
+data_backup.json
+backend-python/medical_knowledge_db/
+backend-python/medical_knowledge_db/*
+medical_knowledge_db/
+    
+# ================================
+# AWS & DEPLOYMENT
+# ================================
+*.pem
+*.key
+*.msi
+hospital-key.pem
+AWSCLIV2.msi
+aws-credentials.json
+
+# ================================
+# IDE & EDITOR FILES
+# ================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# ================================
+# OS GENERATED FILES
+# ================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# ================================
+# LOGS & RUNTIME
+# ================================
+logs/
+*.log
+pids/
+*.pid
+*.seed
+*.pid.lock
+lib-cov/
+coverage/
+.nyc_output/
+.grunt/
+.lock-wscript/
+.node_repl_history/
+.npm/
+.eslintcache/
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# ================================
+# COMPILED & BUILD ARTIFACTS
+# ================================
+*.tsbuildinfo
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# ================================
+# DOCKER
+# ================================
+.dockerignore
+
+# ================================
+# GIT
+# ================================
+*.orig
+*.rej
+.gitignore.bak
+
+# ================================
+# TEMPORARY FILES
+# ================================
+*.tmp
+*.temp
+.tmp/
+.temp/
+
+# ================================
+# GOOGLE API & OAUTH
+# ================================
+google_credentials.json
+oauth_credentials.json
+client_secret.json
+token.pickle
+backend-python/token.pickle
+*.pickle
+
+# ================================
+# PROJECT SPECIFIC
+# ================================
+# Test and diagnostic files
+test_*.py
+check_*.py
+diagnose_*.py
+fix_*.py
+debug_*.py
+
+# Deployment scripts (if containing sensitive info)
+deploy-*.ps1
+*.bat
+*.sh
+
+# Reports directory (may contain sensitive patient data)
+backend-python/reports/
+
+# Documentation artifacts (optional - remove if you want to commit them)
+# *.md
+
+# ================================
+# SECRETS & KEYS (never commit)
+# ================================
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa
+id_ed25519
+.env.*
+!.env.example
+!.env.*.example
+secrets/
+credentials.json
+service-account*.json
+backend-python/.env
+
+# Secrets and local files
+*.pem
+*.key
+.env
+.env.*
+!.env.example
+.aws/

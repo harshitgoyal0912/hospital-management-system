@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Mobile viewport and keyboard handling */
+html, body {
+  min-height: 100%;
+  width: 100%;
+}
+
+/* Only body sets overflow, so it applies to the browser window and the
+   whole page scrolls normally (no fixed-height inner scroll box). */
+body {
+  overflow-x: hidden;
+  background-color: #020617; /* slate-950, matches the app background */
+}
+
+/* Prevent mobile browser zoom on input focus */
+@media screen and (max-width: 768px) {
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+}
+
+/* Mobile-specific fixes for keyboard */
+@supports (-webkit-touch-callout: none) {
+  /* iOS specific fixes */
+  body {
+    -webkit-overflow-scrolling: auto !important;
+  }
+}
+
+/* Prevent scrolling of the entire page when keyboard appears */
+.no-scroll {
+  overflow: hidden !important;
+  position: fixed !important;
+  width: 100% !important;
+  height: 100% !important;
+}

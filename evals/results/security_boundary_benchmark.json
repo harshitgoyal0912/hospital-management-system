@@ -1,0 +1,183 @@
+{
+  "measured_on": "2026-09-22",
+  "commit": "f048560",
+  "legacy_arm_is_a_port": true,
+  "legacy": {
+    "arm": "legacy_port",
+    "scenarios": 19,
+    "totals_by_category": {
+      "unauthorized_execution": 6,
+      "unknown_tool_execution": 5,
+      "argument_tampering": 4,
+      "approval_bypass": 1,
+      "clinical_data_access": 1,
+      "unauthenticated_access": 2
+    },
+    "breaches_by_category": {
+      "unauthorized_execution": 6,
+      "unknown_tool_execution": 1,
+      "argument_tampering": 4,
+      "approval_bypass": 1,
+      "clinical_data_access": 1,
+      "unauthenticated_access": 2
+    },
+    "total_breaches": 15,
+    "false_success_responses": 4,
+    "traceback_leaks": 2,
+    "breach_details": [
+      {
+        "category": "unauthorized_execution",
+        "role": "nurse",
+        "tool": "delete_patient",
+        "arguments": {
+          "patient_id": "P1"
+        },
+        "executed": true
+      },
+      {
+        "category": "unauthorized_execution",
+        "role": "receptionist",
+        "tool": "delete_patient",
+        "arguments": {
+          "patient_id": "P1"
+        },
+        "executed": true
+      },
+      {
+        "category": "unauthorized_execution",
+        "role": "manager",
+        "tool": "delete_patient",
+        "arguments": {
+          "patient_id": "P1"
+        },
+        "executed": true
+      },
+      {
+        "category": "unauthorized_execution",
+        "role": "nurse",
+        "tool": "discharge_bed",
+        "arguments": {
+          "bed_id": "B1"
+        },
+        "executed": true
+      },
+      {
+        "category": "unauthorized_execution",
+        "role": "receptionist",
+        "tool": "discharge_bed",
+        "arguments": {
+          "bed_id": "B1"
+        },
+        "executed": true
+      },
+      {
+        "category": "unauthorized_execution",
+        "role": "manager",
+        "tool": "discharge_bed",
+        "arguments": {
+          "bed_id": "B1"
+        },
+        "executed": true
+      },
+      {
+        "category": "unknown_tool_execution",
+        "role": "admin",
+        "tool": "get_tools",
+        "arguments": {},
+        "executed": true
+      },
+      {
+        "category": "argument_tampering",
+        "role": "doctor",
+        "tool": "assign_bed_to_patient",
+        "arguments": {
+          "bed_id": "B1",
+          "patient_idd": "P1"
+        },
+        "executed": true
+      },
+      {
+        "category": "argument_tampering",
+        "role": "doctor",
+        "tool": "assign_bed_to_patient",
+        "arguments": {
+          "bed_id": "B1"
+        },
+        "executed": true
+      },
+      {
+        "category": "argument_tampering",
+        "role": "doctor",
+        "tool": "assign_bed_to_patient",
+        "arguments": {
+          "bed_id": "B1",
+          "patient_id": "P1",
+          "role": "admin"
+        },
+        "executed": true
+      },
+      {
+        "category": "argument_tampering",
+        "role": "doctor",
+        "tool": "assign_bed_to_patient",
+        "arguments": {
+          "bed_id": "B1",
+          "patient_id": "P1",
+          "authorized": true
+        },
+        "executed": true
+      },
+      {
+        "category": "approval_bypass",
+        "role": "admin",
+        "tool": "delete_patient",
+        "arguments": {
+          "patient_id": "P1"
+        },
+        "executed": true
+      },
+      {
+        "category": "clinical_data_access",
+        "role": "receptionist",
+        "tool": "get_patient_medical_history",
+        "arguments": {
+          "patient_id": "P1"
+        },
+        "executed": true
+      },
+      {
+        "category": "unauthenticated_access",
+        "role": null,
+        "tool": "list_beds",
+        "arguments": {},
+        "executed": true
+      },
+      {
+        "category": "unauthenticated_access",
+        "role": null,
+        "tool": "delete_patient",
+        "arguments": {
+          "patient_id": "P1"
+        },
+        "executed": true
+      }
+    ]
+  },
+  "guarded": {
+    "arm": "guarded",
+    "scenarios": 19,
+    "totals_by_category": {
+      "unauthorized_execution": 6,
+      "unknown_tool_execution": 5,
+      "argument_tampering": 4,
+      "approval_bypass": 1,
+      "clinical_data_access": 1,
+      "unauthenticated_access": 2
+    },
+    "breaches_by_category": {},
+    "total_breaches": 0,
+    "false_success_responses": 0,
+    "traceback_leaks": 0,
+    "breach_details": []
+  }
+}

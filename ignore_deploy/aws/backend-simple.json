@@ -1,0 +1,27 @@
+{
+  "family": "hospital-backend-simple",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::324037286635:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "hospital-backend",
+      "image": "324037286635.dkr.ecr.us-east-1.amazonaws.com/hospital-backend:latest",
+      "portMappings": [
+        {
+          "containerPort": 8000,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true,
+      "environment": [
+        {
+          "name": "DATABASE_URL",
+          "value": "sqlite:///./hospital.db"
+        }
+      ]
+    }
+  ]
+}

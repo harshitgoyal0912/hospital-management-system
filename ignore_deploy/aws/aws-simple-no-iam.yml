@@ -1,0 +1,225 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Hospital Management System - Simple EC2 Setup (No IAM roles)'
+
+Parameters:
+  KeyPairName:
+    Type: String
+    Default: hospital-key
+    Description: Name of the EC2 Key Pair for SSH access
+
+Resources:
+  # VPC
+  HospitalVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: hospital-vpc
+
+  # Internet Gateway
+  HospitalInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: hospital-igw
+
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref HospitalVPC
+      InternetGatewayId: !Ref HospitalInternetGateway
+
+  # Public Subnet
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref HospitalVPC
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: !Select [0, !GetAZs '']
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: hospital-public-subnet
+
+  # Route Table
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref HospitalVPC
+      Tags:
+        - Key: Name
+          Value: hospital-public-rt
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref HospitalInternetGateway
+
+  PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref PublicRouteTable
+
+  # Security Group
+  HospitalSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: hospital-sg
+      GroupDescription: Security group for Hospital Management System
+      VpcId: !Ref HospitalVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+          Description: SSH access
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+          Description: HTTP access
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+          Description: HTTPS access
+        - IpProtocol: tcp
+          FromPort: 3000
+          ToPort: 3000
+          CidrIp: 0.0.0.0/0
+          Description: Frontend access
+        - IpProtocol: tcp
+          FromPort: 8000
+          ToPort: 8000
+          CidrIp: 0.0.0.0/0
+          Description: Backend API access
+      Tags:
+        - Key: Name
+          Value: hospital-sg
+
+  # EC2 Instance (without IAM role)
+  HospitalEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0c02fb55956c7d316  # Amazon Linux 2023
+      InstanceType: t3.medium
+      KeyName: !Ref KeyPairName
+      SecurityGroupIds:
+        - !Ref HospitalSecurityGroup
+      SubnetId: !Ref PublicSubnet
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          yum update -y
+          
+          # Install Docker
+          yum install -y docker
+          systemctl start docker
+          systemctl enable docker
+          usermod -a -G docker ec2-user
+          
+          # Install Docker Compose
+          curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          chmod +x /usr/local/bin/docker-compose
+          
+          # Install AWS CLI v2
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          ./aws/install
+          
+          # Install git
+          yum install -y git
+          
+          # Create app directory
+          mkdir -p /home/ec2-user/app
+          chown ec2-user:ec2-user /home/ec2-user/app
+          
+          # Configure AWS CLI region for ec2-user
+          sudo -u ec2-user mkdir -p /home/ec2-user/.aws
+          sudo -u ec2-user bash -c 'echo "[default]" > /home/ec2-user/.aws/config'
+          sudo -u ec2-user bash -c 'echo "region = us-east-1" >> /home/ec2-user/.aws/config'
+          
+          # Create a startup script for the application
+          cat > /home/ec2-user/start-hospital.sh << 'EOF'
+          #!/bin/bash
+          cd /home/ec2-user/app
+          
+          # Configure AWS credentials (will be set via GitHub Actions)
+          aws configure set region us-east-1
+          
+          # Login to ECR
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 135878023409.dkr.ecr.us-east-1.amazonaws.com
+          
+          # Pull and run containers
+          docker network create hospital-network 2>/dev/null || true
+          
+          # PostgreSQL
+          docker run -d \
+            --name hospital-postgres \
+            --network hospital-network \
+            --network-alias postgres \
+            --restart unless-stopped \
+            -e POSTGRES_DB=hospital_db \
+            -e POSTGRES_USER=postgres \
+            -e POSTGRES_PASSWORD=postgres \
+            postgres:13
+          
+          sleep 10
+          
+          # Backend
+          docker run -d \
+            --name hospital-backend \
+            --network hospital-network \
+            --restart unless-stopped \
+            -e DATABASE_URL="postgresql://postgres:postgres@postgres:5432/hospital_db" \
+            135878023409.dkr.ecr.us-east-1.amazonaws.com/hospital-backend:latest
+          
+          # Frontend
+          docker run -d \
+            --name hospital-frontend \
+            --network hospital-network \
+            --restart unless-stopped \
+            135878023409.dkr.ecr.us-east-1.amazonaws.com/hospital-frontend:latest
+          
+          # Nginx proxy
+          docker run -d \
+            --name nginx-proxy \
+            --network hospital-network \
+            -p 80:80 \
+            --restart unless-stopped \
+            nginx:alpine
+          EOF
+          
+          chmod +x /home/ec2-user/start-hospital.sh
+          chown ec2-user:ec2-user /home/ec2-user/start-hospital.sh
+          
+      Tags:
+        - Key: Name
+          Value: hospital-server
+
+Outputs:
+  EC2PublicIP:
+    Description: Public IP address of the EC2 instance
+    Value: !GetAtt HospitalEC2Instance.PublicIp
+    Export:
+      Name: !Sub "${AWS::StackName}-EC2-PublicIP"
+  
+  EC2PublicDNS:
+    Description: Public DNS name of the EC2 instance
+    Value: !GetAtt HospitalEC2Instance.PublicDnsName
+    Export:
+      Name: !Sub "${AWS::StackName}-EC2-PublicDNS"
+  
+  ApplicationURL:
+    Description: URL to access the application
+    Value: !Sub "http://${HospitalEC2Instance.PublicIp}"
+    Export:
+      Name: !Sub "${AWS::StackName}-ApplicationURL"

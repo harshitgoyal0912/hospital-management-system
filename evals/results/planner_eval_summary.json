@@ -1,0 +1,44 @@
+{
+  "A": {
+    "n": 238,
+    "accuracy": 0.7479,
+    "correct_abstention_rate": 0.7712,
+    "substitution_rate": 0.6429,
+    "unauthorized_proposals": 0,
+    "hallucinated_tools": 0,
+    "wrong_tool": 10,
+    "wrong_arguments": 19,
+    "missing_call": 4,
+    "failed": 0,
+    "latency_p50_ms": 3801,
+    "mean_prompt_tokens": 500
+  },
+  "B": {
+    "n": 148,
+    "accuracy": 0.6622,
+    "correct_abstention_rate": 0.4773,
+    "substitution_rate": 0.1786,
+    "unauthorized_proposals": 0,
+    "hallucinated_tools": 0,
+    "wrong_tool": 4,
+    "wrong_arguments": 0,
+    "missing_call": 0,
+    "failed": 39,
+    "latency_p50_ms": 8287,
+    "mean_prompt_tokens": 1313
+  },
+  "C": {
+    "n": 60,
+    "accuracy": 0.9,
+    "correct_abstention_rate": 0.878,
+    "substitution_rate": 0.1786,
+    "unauthorized_proposals": 0,
+    "hallucinated_tools": 0,
+    "wrong_tool": 1,
+    "wrong_arguments": 0,
+    "missing_call": 0,
+    "failed": 0,
+    "latency_p50_ms": 3142,
+    "mean_prompt_tokens": 1337
+  }
+}

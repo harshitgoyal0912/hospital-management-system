@@ -1,0 +1,104 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: hospital_postgres
+    environment:
+      POSTGRES_DB: hospital_management
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - hospital_network
+
+  # Backend Python API
+  backend:
+    build:
+      context: ./backend-python
+      dockerfile: Dockerfile
+    container_name: hospital_backend
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/hospital_management
+      - HMS_JWT_SECRET=${HMS_JWT_SECRET:-super_secret_jwt_key_at_least_32_characters_long_for_hms_auth_token_issuance}
+      - TOOL_EXECUTION_MODE=guarded
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - SMTP_SERVER=${SMTP_SERVER:-}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - EMAIL_USERNAME=${EMAIL_USERNAME:-}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD:-}
+      - EMAIL_FROM_NAME=${EMAIL_FROM_NAME:-Hospital Management System}
+      - EMAIL_FROM_ADDRESS=${EMAIL_FROM_ADDRESS:-}
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - hospital_network
+    restart: unless-stopped
+    volumes:
+      - ./backend-python:/app
+      - pdf_uploads:/app/uploads  # Dedicated volume for PDF files
+      - medical_knowledge_db:/app/medical_knowledge_db  # Volume for ChromaDB
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend React Application
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: hospital_frontend
+    environment:
+      - VITE_CLAUDE_API_KEY=${VITE_CLAUDE_API_KEY}
+      - VITE_OPENAI_API_KEY=${VITE_OPENAI_API_KEY}
+      - VITE_GROQ_API_KEY=${VITE_GROQ_API_KEY}
+      - VITE_GOOGLE_API_KEY=${VITE_GOOGLE_API_KEY}
+      - VITE_MCP_BRIDGE_URL=http://backend:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - hospital_network
+    restart: unless-stopped
+
+  # Nginx Reverse Proxy (Optional but recommended for production)
+  nginx:
+    image: nginx:alpine
+    container_name: hospital_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - hospital_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  pdf_uploads:
+    driver: local
+  medical_knowledge_db:
+    driver: local
+
+networks:
+  hospital_network:
+    driver: bridge

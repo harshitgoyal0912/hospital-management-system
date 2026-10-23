@@ -1,0 +1,55 @@
+## AWS deployment compose — the PostgreSQL service is replaced by Amazon RDS.
+## Backend reads DATABASE_URL from the .env file that the EC2 user-data script
+## creates at /home/ec2-user/hospital-management-system/backend-python/.env.
+
+services:
+  # Backend Python API — connects to RDS PostgreSQL
+  backend:
+    build:
+      context: ./backend-python
+      dockerfile: Dockerfile
+    container_name: hospital_backend
+    env_file:
+      - ./backend-python/.env
+    ports:
+      - "8000:8000"
+    networks:
+      - hospital_network
+    restart: unless-stopped
+    volumes:
+      - pdf_uploads:/app/uploads
+      - medical_knowledge_db:/app/medical_knowledge_db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend React Application — served via `serve` on port 3000
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_MCP_BRIDGE_URL=${VITE_MCP_BRIDGE_URL:-http://localhost:8000}
+    container_name: hospital_frontend
+    environment:
+      - VITE_MCP_BRIDGE_URL=${VITE_MCP_BRIDGE_URL:-http://localhost:8000}
+    ports:
+      - "80:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - hospital_network
+    restart: unless-stopped
+
+volumes:
+  pdf_uploads:
+    driver: local
+  medical_knowledge_db:
+    driver: local
+
+networks:
+  hospital_network:
+    driver: bridge

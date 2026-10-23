@@ -1,0 +1,30 @@
+{
+  "measured_on": "2026-09-23",
+  "commit": "4c84eef",
+  "encoding": "o200k_base",
+  "baseline_names_only_tokens": 460,
+  "baseline_with_descriptions_tokens": 1225,
+  "baseline_tool_count": 98,
+  "by_role": {
+    "receptionist": {
+      "tools": 14,
+      "tokens": 1404
+    },
+    "nurse": {
+      "tools": 24,
+      "tokens": 2605
+    },
+    "doctor": {
+      "tools": 22,
+      "tokens": 2344
+    },
+    "manager": {
+      "tools": 17,
+      "tokens": 1897
+    },
+    "admin": {
+      "tools": 26,
+      "tokens": 2911
+    }
+  }
+}

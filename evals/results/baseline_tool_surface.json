@@ -1,0 +1,1554 @@
+{
+  "report": {
+    "measured_on": "2026-09-23",
+    "commit": "4c84eef",
+    "encoding": "o200k_base",
+    "registrations_per_file": {
+      "multi_agent_server.py": 129,
+      "comprehensive_server.py": 33,
+      "server.py": 6
+    },
+    "total_registrations": 168,
+    "unique_tool_names": 134,
+    "exposed_to_frontend": 98,
+    "exposed_resolved_in_source": 81,
+    "exposed_with_description": 81,
+    "exposed_with_description_pct": 100.0,
+    "exposed_fully_type_annotated": 81,
+    "selection_prompt_tokens_names_only": 460,
+    "selection_prompt_tokens_with_descriptions": 1225,
+    "tools_missing_from_source": [
+      "add_treatment_record_by_codes",
+      "delete_department",
+      "delete_patient",
+      "delete_room",
+      "delete_staff",
+      "get_document_by_id",
+      "get_patient_medical_history_summary",
+      "get_room_by_id",
+      "get_staff_by_department",
+      "list_supply_categories",
+      "route_request",
+      "update_bed_status",
+      "update_department",
+      "update_document_verification",
+      "update_meeting",
+      "update_patient",
+      "update_room"
+    ]
+  },
+  "tools": [
+    {
+      "name": "get_system_status",
+      "file": "multi_agent_server.py",
+      "line": 121,
+      "has_description": true,
+      "description_chars": 54,
+      "param_count": 0,
+      "annotated_param_count": 0
+    },
+    {
+      "name": "get_agent_info",
+      "file": "multi_agent_server.py",
+      "line": 147,
+      "has_description": true,
+      "description_chars": 43,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "list_agents",
+      "file": "multi_agent_server.py",
+      "line": 177,
+      "has_description": true,
+      "description_chars": 52,
+      "param_count": 0,
+      "annotated_param_count": 0
+    },
+    {
+      "name": "execute_workflow",
+      "file": "multi_agent_server.py",
+      "line": 200,
+      "has_description": true,
+      "description_chars": 38,
+      "param_count": 2,
+      "annotated_param_count": 2
+    },
+    {
+      "name": "execute_langraph_patient_admission",
+      "file": "multi_agent_server.py",
+      "line": 215,
+      "has_description": true,
+      "description_chars": 85,
+      "param_count": 2,
+      "annotated_param_count": 2
+    },
+    {
+      "name": "execute_langraph_clinical_decision",
+      "file": "multi_agent_server.py",
+      "line": 229,
+      "has_description": true,
+      "description_chars": 85,
+      "param_count": 2,
+      "annotated_param_count": 2
+    },
+    {
+      "name": "get_langraph_workflow_status",
+      "file": "multi_agent_server.py",
+      "line": 243,
+      "has_description": true,
+      "description_chars": 50,
+      "param_count": 0,
+      "annotated_param_count": 0
+    },
+    {
+      "name": "route_to_langraph_workflow",
+      "file": "multi_agent_server.py",
+      "line": 257,
+      "has_description": true,
+      "description_chars": 59,
+      "param_count": 2,
+      "annotated_param_count": 2
+    },
+    {
+      "name": "enhanced_symptom_analysis",
+      "file": "multi_agent_server.py",
+      "line": 275,
+      "has_description": true,
+      "description_chars": 69,
+      "param_count": 2,
+      "annotated_param_count": 2
+    },
+    {
+      "name": "enhanced_differential_diagnosis",
+      "file": "multi_agent_server.py",
+      "line": 288,
+      "has_description": true,
+      "description_chars": 69,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "enhanced_treatment_recommendations",
+      "file": "multi_agent_server.py",
+      "line": 301,
+      "has_description": true,
+      "description_chars": 61,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "enhanced_drug_interaction_analysis",
+      "file": "multi_agent_server.py",
+      "line": 314,
+      "has_description": true,
+      "description_chars": 65,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "enhanced_vital_signs_analysis",
+      "file": "multi_agent_server.py",
+      "line": 327,
+      "has_description": true,
+      "description_chars": 63,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "enhanced_clinical_risk_assessment",
+      "file": "multi_agent_server.py",
+      "line": 340,
+      "has_description": true,
+      "description_chars": 71,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "ai_master_request",
+      "file": "multi_agent_server.py",
+      "line": 357,
+      "has_description": true,
+      "description_chars": 93,
+      "param_count": 3,
+      "annotated_param_count": 3
+    },
+    {
+      "name": "get_ai_system_dashboard",
+      "file": "multi_agent_server.py",
+      "line": 370,
+      "has_description": true,
+      "description_chars": 68,
+      "param_count": 0,
+      "annotated_param_count": 0
+    },
+    {
+      "name": "run_predictive_forecast",
+      "file": "multi_agent_server.py",
+      "line": 382,
+      "has_description": true,
+      "description_chars": 56,
+      "param_count": 3,
+      "annotated_param_count": 3
+    },
+    {
+      "name": "translate_medical_text",
+      "file": "multi_agent_server.py",
+      "line": 425,
+      "has_description": true,
+      "description_chars": 72,
+      "param_count": 4,
+      "annotated_param_count": 4
+    },
+    {
+      "name": "manage_equipment_lifecycle",
+      "file": "multi_agent_server.py",
+      "line": 477,
+      "has_description": true,
+      "description_chars": 58,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "get_equipment_dashboard",
+      "file": "multi_agent_server.py",
+      "line": 489,
+      "has_description": true,
+      "description_chars": 57,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "get_fleet_overview",
+      "file": "multi_agent_server.py",
+      "line": 501,
+      "has_description": true,
+      "description_chars": 64,
+      "param_count": 0,
+      "annotated_param_count": 0
+    },
+    {
+      "name": "get_supported_languages",
+      "file": "multi_agent_server.py",
+      "line": 513,
+      "has_description": true,
+      "description_chars": 48,
+      "param_count": 0,
+      "annotated_param_count": 0
+    },
+    {
+      "name": "get_emergency_phrases",
+      "file": "multi_agent_server.py",
+      "line": 525,
+      "has_description": true,
+      "description_chars": 52,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "get_ai_system_health",
+      "file": "multi_agent_server.py",
+      "line": 546,
+      "has_description": true,
+      "description_chars": 42,
+      "param_count": 0,
+      "annotated_param_count": 0
+    },
+    {
+      "name": "create_user",
+      "file": "multi_agent_server.py",
+      "line": 562,
+      "has_description": true,
+      "description_chars": 34,
+      "param_count": 8,
+      "annotated_param_count": 8
+    },
+    {
+      "name": "get_user_by_id",
+      "file": "multi_agent_server.py",
+      "line": 592,
+      "has_description": true,
+      "description_chars": 17,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "list_users",
+      "file": "multi_agent_server.py",
+      "line": 612,
+      "has_description": true,
+      "description_chars": 31,
+      "param_count": 0,
+      "annotated_param_count": 0
+    },
+    {
+      "name": "update_user",
+      "file": "multi_agent_server.py",
+      "line": 632,
+      "has_description": true,
+      "description_chars": 24,
+      "param_count": 8,
+      "annotated_param_count": 8
+    },
+    {
+      "name": "delete_user",
+      "file": "multi_agent_server.py",
+      "line": 646,
+      "has_description": true,
+      "description_chars": 32,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "create_patient",
+      "file": "multi_agent_server.py",
+      "line": 659,
+      "has_description": true,
+      "description_chars": 28,
+      "param_count": 13,
+      "annotated_param_count": 13
+    },
+    {
+      "name": "check_bed_status",
+      "file": "multi_agent_server.py",
+      "line": 679,
+      "has_description": true,
+      "description_chars": 594,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "auto_update_expired_cleaning_beds",
+      "file": "multi_agent_server.py",
+      "line": 704,
+      "has_description": true,
+      "description_chars": 438,
+      "param_count": 0,
+      "annotated_param_count": 0
+    },
+    {
+      "name": "list_patients",
+      "file": "multi_agent_server.py",
+      "line": 725,
+      "has_description": true,
+      "description_chars": 131,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "get_patient_by_id",
+      "file": "multi_agent_server.py",
+      "line": 738,
+      "has_description": true,
+      "description_chars": 20,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "search_patients",
+      "file": "multi_agent_server.py",
+      "line": 747,
+      "has_description": true,
+      "description_chars": 40,
+      "param_count": 5,
+      "annotated_param_count": 5
+    },
+    {
+      "name": "create_department",
+      "file": "multi_agent_server.py",
+      "line": 763,
+      "has_description": true,
+      "description_chars": 24,
+      "param_count": 6,
+      "annotated_param_count": 6
+    },
+    {
+      "name": "list_departments",
+      "file": "multi_agent_server.py",
+      "line": 794,
+      "has_description": true,
+      "description_chars": 21,
+      "param_count": 0,
+      "annotated_param_count": 0
+    },
+    {
+      "name": "get_department_by_id",
+      "file": "multi_agent_server.py",
+      "line": 803,
+      "has_description": true,
+      "description_chars": 23,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "create_room",
+      "file": "multi_agent_server.py",
+      "line": 816,
+      "has_description": true,
+      "description_chars": 18,
+      "param_count": 6,
+      "annotated_param_count": 6
+    },
+    {
+      "name": "list_rooms",
+      "file": "multi_agent_server.py",
+      "line": 847,
+      "has_description": true,
+      "description_chars": 35,
+      "param_count": 2,
+      "annotated_param_count": 2
+    },
+    {
+      "name": "create_bed",
+      "file": "multi_agent_server.py",
+      "line": 856,
+      "has_description": true,
+      "description_chars": 17,
+      "param_count": 4,
+      "annotated_param_count": 4
+    },
+    {
+      "name": "list_beds",
+      "file": "multi_agent_server.py",
+      "line": 884,
+      "has_description": true,
+      "description_chars": 602,
+      "param_count": 3,
+      "annotated_param_count": 3
+    },
+    {
+      "name": "get_bed_by_id",
+      "file": "multi_agent_server.py",
+      "line": 940,
+      "has_description": true,
+      "description_chars": 26,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "get_bed_by_number",
+      "file": "multi_agent_server.py",
+      "line": 949,
+      "has_description": true,
+      "description_chars": 30,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "assign_bed_to_patient",
+      "file": "multi_agent_server.py",
+      "line": 958,
+      "has_description": true,
+      "description_chars": 26,
+      "param_count": 3,
+      "annotated_param_count": 3
+    },
+    {
+      "name": "discharge_bed",
+      "file": "multi_agent_server.py",
+      "line": 968,
+      "has_description": true,
+      "description_chars": 129,
+      "param_count": 2,
+      "annotated_param_count": 2
+    },
+    {
+      "name": "record_patient_supply_usage",
+      "file": "multi_agent_server.py",
+      "line": 994,
+      "has_description": true,
+      "description_chars": 117,
+      "param_count": 17,
+      "annotated_param_count": 17
+    },
+    {
+      "name": "get_patient_supply_usage",
+      "file": "multi_agent_server.py",
+      "line": 1019,
+      "has_description": true,
+      "description_chars": 39,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "update_supply_usage_status",
+      "file": "multi_agent_server.py",
+      "line": 1028,
+      "has_description": true,
+      "description_chars": 70,
+      "param_count": 6,
+      "annotated_param_count": 6
+    },
+    {
+      "name": "get_supply_usage_for_discharge_report",
+      "file": "multi_agent_server.py",
+      "line": 1043,
+      "has_description": true,
+      "description_chars": 54,
+      "param_count": 3,
+      "annotated_param_count": 3
+    },
+    {
+      "name": "record_patient_supply_usage_by_code",
+      "file": "multi_agent_server.py",
+      "line": 1056,
+      "has_description": true,
+      "description_chars": 95,
+      "param_count": 8,
+      "annotated_param_count": 8
+    },
+    {
+      "name": "list_patient_medications",
+      "file": "multi_agent_server.py",
+      "line": 1079,
+      "has_description": true,
+      "description_chars": 48,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "search_supply_usage_by_patient",
+      "file": "multi_agent_server.py",
+      "line": 1088,
+      "has_description": true,
+      "description_chars": 51,
+      "param_count": 4,
+      "annotated_param_count": 4
+    },
+    {
+      "name": "calculate_patient_medication_costs",
+      "file": "multi_agent_server.py",
+      "line": 1101,
+      "has_description": true,
+      "description_chars": 52,
+      "param_count": 3,
+      "annotated_param_count": 3
+    },
+    {
+      "name": "create_equipment",
+      "file": "multi_agent_server.py",
+      "line": 1116,
+      "has_description": true,
+      "description_chars": 28,
+      "param_count": 13,
+      "annotated_param_count": 13
+    },
+    {
+      "name": "create_supply",
+      "file": "multi_agent_server.py",
+      "line": 1157,
+      "has_description": true,
+      "description_chars": 25,
+      "param_count": 12,
+      "annotated_param_count": 12
+    },
+    {
+      "name": "schedule_equipment_maintenance",
+      "file": "multi_agent_server.py",
+      "line": 1172,
+      "has_description": true,
+      "description_chars": 35,
+      "param_count": 4,
+      "annotated_param_count": 4
+    },
+    {
+      "name": "list_equipment",
+      "file": "multi_agent_server.py",
+      "line": 1184,
+      "has_description": true,
+      "description_chars": 39,
+      "param_count": 3,
+      "annotated_param_count": 3
+    },
+    {
+      "name": "create_equipment_category",
+      "file": "multi_agent_server.py",
+      "line": 1194,
+      "has_description": true,
+      "description_chars": 32,
+      "param_count": 2,
+      "annotated_param_count": 2
+    },
+    {
+      "name": "list_equipment_categories",
+      "file": "multi_agent_server.py",
+      "line": 1204,
+      "has_description": true,
+      "description_chars": 30,
+      "param_count": 0,
+      "annotated_param_count": 0
+    },
+    {
+      "name": "get_equipment_by_id",
+      "file": "multi_agent_server.py",
+      "line": 1213,
+      "has_description": true,
+      "description_chars": 20,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "update_equipment_status",
+      "file": "multi_agent_server.py",
+      "line": 1222,
+      "has_description": true,
+      "description_chars": 24,
+      "param_count": 3,
+      "annotated_param_count": 3
+    },
+    {
+      "name": "update_equipment",
+      "file": "multi_agent_server.py",
+      "line": 1232,
+      "has_description": true,
+      "description_chars": 29,
+      "param_count": 7,
+      "annotated_param_count": 7
+    },
+    {
+      "name": "delete_equipment",
+      "file": "multi_agent_server.py",
+      "line": 1246,
+      "has_description": true,
+      "description_chars": 17,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "get_equipment_by_status",
+      "file": "multi_agent_server.py",
+      "line": 1255,
+      "has_description": true,
+      "description_chars": 41,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "list_supplies",
+      "file": "multi_agent_server.py",
+      "line": 1264,
+      "has_description": true,
+      "description_chars": 38,
+      "param_count": 2,
+      "annotated_param_count": 2
+    },
+    {
+      "name": "get_supply_by_id",
+      "file": "multi_agent_server.py",
+      "line": 1274,
+      "has_description": true,
+      "description_chars": 17,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "update_supply_stock",
+      "file": "multi_agent_server.py",
+      "line": 1283,
+      "has_description": true,
+      "description_chars": 51,
+      "param_count": 6,
+      "annotated_param_count": 6
+    },
+    {
+      "name": "update_supply",
+      "file": "multi_agent_server.py",
+      "line": 1296,
+      "has_description": true,
+      "description_chars": 26,
+      "param_count": 7,
+      "annotated_param_count": 7
+    },
+    {
+      "name": "delete_supply",
+      "file": "multi_agent_server.py",
+      "line": 1310,
+      "has_description": true,
+      "description_chars": 21,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "get_low_stock_supplies",
+      "file": "multi_agent_server.py",
+      "line": 1319,
+      "has_description": true,
+      "description_chars": 52,
+      "param_count": 0,
+      "annotated_param_count": 0
+    },
+    {
+      "name": "list_inventory_transactions",
+      "file": "multi_agent_server.py",
+      "line": 1328,
+      "has_description": true,
+      "description_chars": 52,
+      "param_count": 4,
+      "annotated_param_count": 4
+    },
+    {
+      "name": "get_supply_usage_report",
+      "file": "multi_agent_server.py",
+      "line": 1340,
+      "has_description": true,
+      "description_chars": 48,
+      "param_count": 3,
+      "annotated_param_count": 3
+    },
+    {
+      "name": "create_staff",
+      "file": "multi_agent_server.py",
+      "line": 1351,
+      "has_description": true,
+      "description_chars": 26,
+      "param_count": 7,
+      "annotated_param_count": 7
+    },
+    {
+      "name": "list_staff",
+      "file": "multi_agent_server.py",
+      "line": 1383,
+      "has_description": true,
+      "description_chars": 35,
+      "param_count": 3,
+      "annotated_param_count": 3
+    },
+    {
+      "name": "get_staff_by_id",
+      "file": "multi_agent_server.py",
+      "line": 1393,
+      "has_description": true,
+      "description_chars": 25,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "update_staff",
+      "file": "multi_agent_server.py",
+      "line": 1402,
+      "has_description": true,
+      "description_chars": 62,
+      "param_count": 6,
+      "annotated_param_count": 6
+    },
+    {
+      "name": "update_staff_status",
+      "file": "multi_agent_server.py",
+      "line": 1415,
+      "has_description": true,
+      "description_chars": 61,
+      "param_count": 3,
+      "annotated_param_count": 3
+    },
+    {
+      "name": "upload_medical_document",
+      "file": "multi_agent_server.py",
+      "line": 1432,
+      "has_description": true,
+      "description_chars": 40,
+      "param_count": 5,
+      "annotated_param_count": 5
+    },
+    {
+      "name": "process_medical_document",
+      "file": "multi_agent_server.py",
+      "line": 1445,
+      "has_description": true,
+      "description_chars": 61,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "get_patient_medical_history",
+      "file": "multi_agent_server.py",
+      "line": 1454,
+      "has_description": true,
+      "description_chars": 72,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "search_medical_documents",
+      "file": "multi_agent_server.py",
+      "line": 1463,
+      "has_description": true,
+      "description_chars": 38,
+      "param_count": 4,
+      "annotated_param_count": 4
+    },
+    {
+      "name": "query_medical_knowledge",
+      "file": "multi_agent_server.py",
+      "line": 1475,
+      "has_description": true,
+      "description_chars": 65,
+      "param_count": 2,
+      "annotated_param_count": 2
+    },
+    {
+      "name": "extract_medical_entities",
+      "file": "multi_agent_server.py",
+      "line": 1485,
+      "has_description": true,
+      "description_chars": 44,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "get_medical_timeline",
+      "file": "multi_agent_server.py",
+      "line": 1494,
+      "has_description": true,
+      "description_chars": 49,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "schedule_meeting",
+      "file": "multi_agent_server.py",
+      "line": 1507,
+      "has_description": true,
+      "description_chars": 201,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "list_meetings",
+      "file": "multi_agent_server.py",
+      "line": 1521,
+      "has_description": true,
+      "description_chars": 186,
+      "param_count": 2,
+      "annotated_param_count": 2
+    },
+    {
+      "name": "get_meeting_by_id",
+      "file": "multi_agent_server.py",
+      "line": 1537,
+      "has_description": true,
+      "description_chars": 107,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "update_meeting_status",
+      "file": "multi_agent_server.py",
+      "line": 1550,
+      "has_description": true,
+      "description_chars": 753,
+      "param_count": 3,
+      "annotated_param_count": 3
+    },
+    {
+      "name": "add_meeting_notes",
+      "file": "multi_agent_server.py",
+      "line": 1597,
+      "has_description": true,
+      "description_chars": 153,
+      "param_count": 3,
+      "annotated_param_count": 3
+    },
+    {
+      "name": "send_email",
+      "file": "multi_agent_server.py",
+      "line": 1615,
+      "has_description": true,
+      "description_chars": 236,
+      "param_count": 4,
+      "annotated_param_count": 4
+    },
+    {
+      "name": "generate_discharge_report",
+      "file": "multi_agent_server.py",
+      "line": 1686,
+      "has_description": true,
+      "description_chars": 252,
+      "param_count": 3,
+      "annotated_param_count": 3
+    },
+    {
+      "name": "discharge_patient_complete",
+      "file": "multi_agent_server.py",
+      "line": 1708,
+      "has_description": true,
+      "description_chars": 697,
+      "param_count": 6,
+      "annotated_param_count": 6
+    },
+    {
+      "name": "get_dashboard_stats",
+      "file": "multi_agent_server.py",
+      "line": 1739,
+      "has_description": true,
+      "description_chars": 56,
+      "param_count": 0,
+      "annotated_param_count": 0
+    },
+    {
+      "name": "get_live_bed_occupancy",
+      "file": "multi_agent_server.py",
+      "line": 1813,
+      "has_description": true,
+      "description_chars": 63,
+      "param_count": 0,
+      "annotated_param_count": 0
+    },
+    {
+      "name": "get_patient_flow_data",
+      "file": "multi_agent_server.py",
+      "line": 1869,
+      "has_description": true,
+      "description_chars": 76,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "get_emergency_alerts",
+      "file": "multi_agent_server.py",
+      "line": 1920,
+      "has_description": true,
+      "description_chars": 69,
+      "param_count": 0,
+      "annotated_param_count": 0
+    },
+    {
+      "name": "get_recent_activity",
+      "file": "multi_agent_server.py",
+      "line": 2005,
+      "has_description": true,
+      "description_chars": 57,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "get_patient_discharge_status",
+      "file": "multi_agent_server.py",
+      "line": 2068,
+      "has_description": true,
+      "description_chars": 210,
+      "param_count": 2,
+      "annotated_param_count": 2
+    },
+    {
+      "name": "add_treatment_record_simple",
+      "file": "multi_agent_server.py",
+      "line": 2087,
+      "has_description": true,
+      "description_chars": 238,
+      "param_count": 4,
+      "annotated_param_count": 4
+    },
+    {
+      "name": "add_equipment_usage_with_codes",
+      "file": "multi_agent_server.py",
+      "line": 2112,
+      "has_description": true,
+      "description_chars": 959,
+      "param_count": 11,
+      "annotated_param_count": 11
+    },
+    {
+      "name": "add_equipment_usage_simple",
+      "file": "multi_agent_server.py",
+      "line": 2262,
+      "has_description": true,
+      "description_chars": 904,
+      "param_count": 7,
+      "annotated_param_count": 7
+    },
+    {
+      "name": "add_equipment_usage_by_codes",
+      "file": "multi_agent_server.py",
+      "line": 2388,
+      "has_description": true,
+      "description_chars": 884,
+      "param_count": 7,
+      "annotated_param_count": 7
+    },
+    {
+      "name": "assign_staff_to_patient_simple",
+      "file": "multi_agent_server.py",
+      "line": 2432,
+      "has_description": true,
+      "description_chars": 181,
+      "param_count": 3,
+      "annotated_param_count": 3
+    },
+    {
+      "name": "complete_equipment_usage_simple",
+      "file": "multi_agent_server.py",
+      "line": 2454,
+      "has_description": true,
+      "description_chars": 102,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "list_discharge_reports",
+      "file": "multi_agent_server.py",
+      "line": 2467,
+      "has_description": true,
+      "description_chars": 78,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "start_bed_turnover_process",
+      "file": "multi_agent_server.py",
+      "line": 2480,
+      "has_description": true,
+      "description_chars": 274,
+      "param_count": 4,
+      "annotated_param_count": 4
+    },
+    {
+      "name": "complete_bed_cleaning",
+      "file": "multi_agent_server.py",
+      "line": 2499,
+      "has_description": true,
+      "description_chars": 208,
+      "param_count": 3,
+      "annotated_param_count": 3
+    },
+    {
+      "name": "get_bed_status_with_time_remaining",
+      "file": "multi_agent_server.py",
+      "line": 2516,
+      "has_description": true,
+      "description_chars": 193,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "add_patient_to_queue",
+      "file": "multi_agent_server.py",
+      "line": 2529,
+      "has_description": true,
+      "description_chars": 191,
+      "param_count": 3,
+      "annotated_param_count": 3
+    },
+    {
+      "name": "get_patient_queue",
+      "file": "multi_agent_server.py",
+      "line": 2545,
+      "has_description": true,
+      "description_chars": 73,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "assign_next_patient_to_bed",
+      "file": "multi_agent_server.py",
+      "line": 2558,
+      "has_description": true,
+      "description_chars": 126,
+      "param_count": 2,
+      "annotated_param_count": 2
+    },
+    {
+      "name": "update_turnover_progress",
+      "file": "multi_agent_server.py",
+      "line": 2573,
+      "has_description": true,
+      "description_chars": 144,
+      "param_count": 3,
+      "annotated_param_count": 3
+    },
+    {
+      "name": "get_bed_turnover_details",
+      "file": "multi_agent_server.py",
+      "line": 2589,
+      "has_description": true,
+      "description_chars": 62,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "mark_equipment_for_cleaning",
+      "file": "multi_agent_server.py",
+      "line": 2602,
+      "has_description": true,
+      "description_chars": 199,
+      "param_count": 3,
+      "annotated_param_count": 3
+    },
+    {
+      "name": "complete_equipment_cleaning",
+      "file": "multi_agent_server.py",
+      "line": 2618,
+      "has_description": true,
+      "description_chars": 199,
+      "param_count": 3,
+      "annotated_param_count": 3
+    },
+    {
+      "name": "get_equipment_turnover_status",
+      "file": "multi_agent_server.py",
+      "line": 2635,
+      "has_description": true,
+      "description_chars": 79,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "search_discharged_patients",
+      "file": "multi_agent_server.py",
+      "line": 2648,
+      "has_description": true,
+      "description_chars": 302,
+      "param_count": 4,
+      "annotated_param_count": 4
+    },
+    {
+      "name": "get_patient_with_discharge_details",
+      "file": "multi_agent_server.py",
+      "line": 2732,
+      "has_description": true,
+      "description_chars": 161,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "download_discharge_report",
+      "file": "multi_agent_server.py",
+      "line": 2833,
+      "has_description": true,
+      "description_chars": 194,
+      "param_count": 2,
+      "annotated_param_count": 2
+    },
+    {
+      "name": "get_discharge_report_storage_stats",
+      "file": "multi_agent_server.py",
+      "line": 2849,
+      "has_description": true,
+      "description_chars": 52,
+      "param_count": 0,
+      "annotated_param_count": 0
+    },
+    {
+      "name": "list_available_discharge_reports",
+      "file": "multi_agent_server.py",
+      "line": 2860,
+      "has_description": true,
+      "description_chars": 399,
+      "param_count": 5,
+      "annotated_param_count": 5
+    },
+    {
+      "name": "archive_old_discharge_reports",
+      "file": "multi_agent_server.py",
+      "line": 2887,
+      "has_description": true,
+      "description_chars": 138,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "ai_clinical_assistant",
+      "file": "multi_agent_server.py",
+      "line": 2906,
+      "has_description": true,
+      "description_chars": 204,
+      "param_count": 2,
+      "annotated_param_count": 2
+    },
+    {
+      "name": "natural_language_query",
+      "file": "multi_agent_server.py",
+      "line": 2923,
+      "has_description": true,
+      "description_chars": 159,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "process_clinical_notes",
+      "file": "multi_agent_server.py",
+      "line": 2952,
+      "has_description": true,
+      "description_chars": 202,
+      "param_count": 2,
+      "annotated_param_count": 2
+    },
+    {
+      "name": "get_drug_interactions",
+      "file": "multi_agent_server.py",
+      "line": 2970,
+      "has_description": true,
+      "description_chars": 179,
+      "param_count": 2,
+      "annotated_param_count": 2
+    },
+    {
+      "name": "analyze_vital_signs",
+      "file": "multi_agent_server.py",
+      "line": 2988,
+      "has_description": true,
+      "description_chars": 204,
+      "param_count": 2,
+      "annotated_param_count": 2
+    },
+    {
+      "name": "generate_differential_diagnosis",
+      "file": "multi_agent_server.py",
+      "line": 3006,
+      "has_description": true,
+      "description_chars": 158,
+      "param_count": 2,
+      "annotated_param_count": 2
+    },
+    {
+      "name": "create_user",
+      "file": "comprehensive_server.py",
+      "line": 91,
+      "has_description": true,
+      "description_chars": 34,
+      "param_count": 7,
+      "annotated_param_count": 7
+    },
+    {
+      "name": "get_user_by_id",
+      "file": "comprehensive_server.py",
+      "line": 127,
+      "has_description": true,
+      "description_chars": 17,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "list_users",
+      "file": "comprehensive_server.py",
+      "line": 146,
+      "has_description": true,
+      "description_chars": 15,
+      "param_count": 0,
+      "annotated_param_count": 0
+    },
+    {
+      "name": "update_user",
+      "file": "comprehensive_server.py",
+      "line": 162,
+      "has_description": true,
+      "description_chars": 14,
+      "param_count": 8,
+      "annotated_param_count": 8
+    },
+    {
+      "name": "delete_user",
+      "file": "comprehensive_server.py",
+      "line": 202,
+      "has_description": true,
+      "description_chars": 14,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "create_department",
+      "file": "comprehensive_server.py",
+      "line": 228,
+      "has_description": true,
+      "description_chars": 24,
+      "param_count": 6,
+      "annotated_param_count": 6
+    },
+    {
+      "name": "list_departments",
+      "file": "comprehensive_server.py",
+      "line": 255,
+      "has_description": true,
+      "description_chars": 21,
+      "param_count": 0,
+      "annotated_param_count": 0
+    },
+    {
+      "name": "get_department_by_id",
+      "file": "comprehensive_server.py",
+      "line": 271,
+      "has_description": true,
+      "description_chars": 23,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "create_patient",
+      "file": "comprehensive_server.py",
+      "line": 294,
+      "has_description": true,
+      "description_chars": 21,
+      "param_count": 13,
+      "annotated_param_count": 13
+    },
+    {
+      "name": "list_patients",
+      "file": "comprehensive_server.py",
+      "line": 336,
+      "has_description": true,
+      "description_chars": 18,
+      "param_count": 0,
+      "annotated_param_count": 0
+    },
+    {
+      "name": "get_patient_by_id",
+      "file": "comprehensive_server.py",
+      "line": 352,
+      "has_description": true,
+      "description_chars": 57,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "search_patients",
+      "file": "comprehensive_server.py",
+      "line": 386,
+      "has_description": true,
+      "description_chars": 73,
+      "param_count": 5,
+      "annotated_param_count": 5
+    },
+    {
+      "name": "create_room",
+      "file": "comprehensive_server.py",
+      "line": 431,
+      "has_description": true,
+      "description_chars": 18,
+      "param_count": 5,
+      "annotated_param_count": 5
+    },
+    {
+      "name": "list_rooms",
+      "file": "comprehensive_server.py",
+      "line": 457,
+      "has_description": true,
+      "description_chars": 15,
+      "param_count": 0,
+      "annotated_param_count": 0
+    },
+    {
+      "name": "create_bed",
+      "file": "comprehensive_server.py",
+      "line": 477,
+      "has_description": true,
+      "description_chars": 17,
+      "param_count": 4,
+      "annotated_param_count": 4
+    },
+    {
+      "name": "list_beds",
+      "file": "comprehensive_server.py",
+      "line": 501,
+      "has_description": true,
+      "description_chars": 45,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "assign_bed_to_patient",
+      "file": "comprehensive_server.py",
+      "line": 520,
+      "has_description": true,
+      "description_chars": 26,
+      "param_count": 3,
+      "annotated_param_count": 3
+    },
+    {
+      "name": "discharge_bed",
+      "file": "comprehensive_server.py",
+      "line": 558,
+      "has_description": true,
+      "description_chars": 31,
+      "param_count": 2,
+      "annotated_param_count": 2
+    },
+    {
+      "name": "create_staff",
+      "file": "comprehensive_server.py",
+      "line": 589,
+      "has_description": true,
+      "description_chars": 26,
+      "param_count": 10,
+      "annotated_param_count": 10
+    },
+    {
+      "name": "list_staff",
+      "file": "comprehensive_server.py",
+      "line": 621,
+      "has_description": true,
+      "description_chars": 68,
+      "param_count": 2,
+      "annotated_param_count": 2
+    },
+    {
+      "name": "get_staff_by_id",
+      "file": "comprehensive_server.py",
+      "line": 642,
+      "has_description": true,
+      "description_chars": 56,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "create_equipment_category",
+      "file": "comprehensive_server.py",
+      "line": 677,
+      "has_description": true,
+      "description_chars": 32,
+      "param_count": 2,
+      "annotated_param_count": 2
+    },
+    {
+      "name": "create_equipment",
+      "file": "comprehensive_server.py",
+      "line": 696,
+      "has_description": true,
+      "description_chars": 28,
+      "param_count": 11,
+      "annotated_param_count": 11
+    },
+    {
+      "name": "list_equipment",
+      "file": "comprehensive_server.py",
+      "line": 730,
+      "has_description": true,
+      "description_chars": 64,
+      "param_count": 2,
+      "annotated_param_count": 2
+    },
+    {
+      "name": "get_equipment_by_id",
+      "file": "comprehensive_server.py",
+      "line": 751,
+      "has_description": true,
+      "description_chars": 49,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "update_equipment_status",
+      "file": "comprehensive_server.py",
+      "line": 778,
+      "has_description": true,
+      "description_chars": 24,
+      "param_count": 3,
+      "annotated_param_count": 3
+    },
+    {
+      "name": "create_supply_category",
+      "file": "comprehensive_server.py",
+      "line": 809,
+      "has_description": true,
+      "description_chars": 29,
+      "param_count": 2,
+      "annotated_param_count": 2
+    },
+    {
+      "name": "create_supply",
+      "file": "comprehensive_server.py",
+      "line": 828,
+      "has_description": true,
+      "description_chars": 25,
+      "param_count": 12,
+      "annotated_param_count": 12
+    },
+    {
+      "name": "list_supplies",
+      "file": "comprehensive_server.py",
+      "line": 863,
+      "has_description": true,
+      "description_chars": 59,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "update_supply_stock",
+      "file": "comprehensive_server.py",
+      "line": 882,
+      "has_description": true,
+      "description_chars": 53,
+      "param_count": 7,
+      "annotated_param_count": 7
+    },
+    {
+      "name": "log_agent_interaction",
+      "file": "comprehensive_server.py",
+      "line": 937,
+      "has_description": true,
+      "description_chars": 28,
+      "param_count": 7,
+      "annotated_param_count": 7
+    },
+    {
+      "name": "create_legacy_user",
+      "file": "comprehensive_server.py",
+      "line": 970,
+      "has_description": true,
+      "description_chars": 54,
+      "param_count": 4,
+      "annotated_param_count": 4
+    },
+    {
+      "name": "list_legacy_users",
+      "file": "comprehensive_server.py",
+      "line": 989,
+      "has_description": true,
+      "description_chars": 22,
+      "param_count": 0,
+      "annotated_param_count": 0
+    },
+    {
+      "name": "create_user",
+      "file": "server.py",
+      "line": 97,
+      "has_description": true,
+      "description_chars": 34,
+      "param_count": 4,
+      "annotated_param_count": 4
+    },
+    {
+      "name": "create_random_user",
+      "file": "server.py",
+      "line": 138,
+      "has_description": true,
+      "description_chars": 36,
+      "param_count": 0,
+      "annotated_param_count": 0
+    },
+    {
+      "name": "get_user_by_id",
+      "file": "server.py",
+      "line": 178,
+      "has_description": true,
+      "description_chars": 32,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "list_users",
+      "file": "server.py",
+      "line": 195,
+      "has_description": true,
+      "description_chars": 29,
+      "param_count": 0,
+      "annotated_param_count": 0
+    },
+    {
+      "name": "delete_user",
+      "file": "server.py",
+      "line": 213,
+      "has_description": true,
+      "description_chars": 32,
+      "param_count": 1,
+      "annotated_param_count": 1
+    },
+    {
+      "name": "update_user",
+      "file": "server.py",
+      "line": 243,
+      "has_description": true,
+      "description_chars": 38,
+      "param_count": 5,
+      "annotated_param_count": 5
+    }
+  ]
+}

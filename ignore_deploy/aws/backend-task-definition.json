@@ -1,0 +1,89 @@
+{
+  "family": "hospital-backend-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "hospital-backend",
+      "image": "ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/hospital-backend:latest",
+      "portMappings": [
+        {
+          "containerPort": 8000,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true,
+      "environment": [
+        {
+          "name": "DATABASE_URL",
+          "value": "postgresql://postgres:PASSWORD@RDS_ENDPOINT:5432/hospital_management"
+        },
+        {
+          "name": "SMTP_SERVER",
+          "value": "smtp.gmail.com"
+        },
+        {
+          "name": "SMTP_PORT",
+          "value": "587"
+        },
+        {
+          "name": "EMAIL_FROM_NAME",
+          "value": "Hospital Management System"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "GEMINI_API_KEY",
+          "valueFrom": "arn:aws:ssm:us-east-1:ACCOUNT_ID:parameter/hospital/gemini-api-key"
+        },
+        {
+          "name": "EMAIL_USERNAME",
+          "valueFrom": "arn:aws:ssm:us-east-1:ACCOUNT_ID:parameter/hospital/email-username"
+        },
+        {
+          "name": "EMAIL_PASSWORD",
+          "valueFrom": "arn:aws:ssm:us-east-1:ACCOUNT_ID:parameter/hospital/email-password"
+        },
+        {
+          "name": "EMAIL_FROM_ADDRESS",
+          "valueFrom": "arn:aws:ssm:us-east-1:ACCOUNT_ID:parameter/hospital/email-from-address"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/hospital-backend",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "mountPoints": [
+        {
+          "sourceVolume": "medical-knowledge-storage",
+          "containerPath": "/app/medical_knowledge_db",
+          "readOnly": false
+        }
+      ],
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "curl -f http://localhost:8000/health || exit 1"
+        ],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 60
+      }
+    }
+  ],
+  "volumes": [
+    {
+      "name": "medical-knowledge-storage",
+      "host": {}
+    }
+  ]
+}

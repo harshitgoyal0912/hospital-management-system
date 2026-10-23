@@ -1,0 +1,687 @@
+name: Hospital Management System CI/CD
+
+on:
+  push:
+    branches: [ main, dev-aws ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY_BACKEND: hospital-backend
+  ECR_REPOSITORY_FRONTEND: hospital-frontend
+  EC2_HOST: 54.85.118.65
+  # Environment variables for the entire workflow
+  VITE_OPENAI_API_KEY: ${{ secrets.VITE_OPENAI_API_KEY }}
+  VITE_LANGSMITH_API_KEY: ${{ secrets.VITE_LANGSMITH_API_KEY }}
+  VITE_LANGSMITH_PROJECT: hospital-management-system
+  VITE_LANGSMITH_TRACING: true
+  # Google OAuth credentials
+  GOOGLE_PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
+  GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+  GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+  # Email configuration for deployment
+  SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
+  SMTP_PORT: ${{ secrets.SMTP_PORT }}
+  EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
+  EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+  EMAIL_FROM_NAME: ${{ secrets.EMAIL_FROM_NAME }}
+  EMAIL_FROM_ADDRESS: ${{ secrets.EMAIL_FROM_ADDRESS }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+    
+    - name: Install dependencies
+      run: |
+        cd backend-python
+        pip install uv
+        if [ -f uv.lock ]; then
+          uv export --frozen --no-dev --no-emit-project -o /tmp/requirements.txt
+          uv pip install --system -r /tmp/requirements.txt
+        fi
+        uv pip install --system --no-deps -e .
+    
+    - name: Run basic health check
+      run: |
+        cd backend-python
+        python -c "import database; print('✅ Database module imported successfully')"
+
+    - name: Install test dependencies
+      run: |
+        cd backend-python
+        uv pip install --system pytest pytest-cov pytest-asyncio
+
+    - name: Run test suite
+      run: |
+        cd backend-python
+        pytest -q --junitxml=pytest-report.xml
+
+    - name: Upload test report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: pytest-report
+        path: backend-python/pytest-report.xml
+
+    - name: Set up Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install frontend dependencies
+      run: |
+        cd frontend
+        npm ci
+
+    - name: Run frontend tests
+      run: |
+        cd frontend
+        npm test
+    
+    - name: Test PDF dependencies
+      run: |
+        cd backend-python
+        python -c "
+        try:
+            from reportlab.lib.pagesizes import A4
+            from reportlab.platypus import SimpleDocTemplate, Paragraph
+            from reportlab.lib.styles import getSampleStyleSheet
+            import markdown2
+            print('✅ reportlab imported successfully')
+            print('✅ markdown2 imported successfully')
+            print('✅ PDF dependencies verified')
+            
+            # Test PDF creation
+            doc = SimpleDocTemplate('test.pdf', pagesize=A4)
+            styles = getSampleStyleSheet()
+            story = [Paragraph('CI/CD PDF Test', styles['Title'])]
+            doc.build(story)
+            
+            import os
+            if os.path.exists('test.pdf'):
+                size = os.path.getsize('test.pdf')
+                print(f'✅ PDF creation test passed ({size} bytes)')
+                os.remove('test.pdf')
+            else:
+                print('❌ PDF creation test failed')
+                exit(1)
+        except ImportError as e:
+            print(f'❌ PDF dependency missing: {e}')
+            exit(1)
+        except Exception as e:
+            print(f'❌ PDF creation failed: {e}')
+            exit(1)
+        "
+
+  build-and-deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev-aws'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Setup Google OAuth credentials for backend
+      working-directory: ./backend-python
+      run: |
+        echo "🔐 Setting up Google OAuth credentials..."
+        echo '${{ secrets.GOOGLE_OAUTH_CREDENTIALS }}' > credentials.json
+        echo "🔑 Setting up Google OAuth tokens..."
+        echo '${{ secrets.GOOGLE_OAUTH_TOKEN }}' | base64 -d > token.pickle
+        echo "✅ Google OAuth credentials and tokens configured"
+
+    - name: Build and push backend image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        echo "🔨 Building backend image..."
+        cd backend-python
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:$IMAGE_TAG .
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:latest .
+        
+        echo "🧪 Testing PDF dependencies in Docker image..."
+        docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:latest python -c "
+        try:
+            from reportlab.lib.pagesizes import A4
+            from reportlab.platypus import SimpleDocTemplate, Paragraph
+            from reportlab.lib.styles import getSampleStyleSheet
+            import markdown2
+            print('✅ Docker image: PDF dependencies verified')
+            
+            # Test PDF creation in container
+            doc = SimpleDocTemplate('/tmp/docker-test.pdf', pagesize=A4)
+            styles = getSampleStyleSheet()
+            story = [Paragraph('Docker PDF Test', styles['Title'])]
+            doc.build(story)
+            
+            import os
+            if os.path.exists('/tmp/docker-test.pdf'):
+                size = os.path.getsize('/tmp/docker-test.pdf')
+                print(f'✅ Docker image: PDF creation works ({size} bytes)')
+            else:
+                print('❌ Docker image: PDF creation failed')
+                exit(1)
+        except ImportError as e:
+            print(f'❌ Docker image: PDF dependency missing: {e}')
+            exit(1)
+        except Exception as e:
+            print(f'❌ Docker image: PDF creation failed: {e}')
+            exit(1)
+        "
+        
+        echo "📤 Pushing backend image..."
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:latest
+        echo "✅ Backend image pushed successfully"
+
+    - name: Create frontend .env file for production
+      working-directory: ./frontend
+      run: |
+        echo "VITE_OPENAI_API_KEY=${{ secrets.VITE_OPENAI_API_KEY }}" > .env
+        echo "VITE_LANGSMITH_API_KEY=${{ secrets.VITE_LANGSMITH_API_KEY }}" >> .env
+        echo "VITE_LANGSMITH_PROJECT=hospital-management-system" >> .env
+        echo "VITE_LANGSMITH_TRACING=true" >> .env
+        echo "VITE_MCP_BRIDGE_URL=http://${{ env.EC2_HOST }}" >> .env
+        echo "✅ Frontend .env file created"
+
+    - name: Build and push frontend image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        echo "🔨 Building frontend image..."
+        cd frontend
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:$IMAGE_TAG .
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:latest .
+        echo "📤 Pushing frontend image..."
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:latest
+        echo "✅ Frontend image pushed successfully"
+
+    - name: Create deployment script
+      run: |
+        cat > deploy-to-ec2.sh << 'EOF'
+        #!/bin/bash
+        set -e
+        
+        echo "🚀 Starting deployment to EC2..."
+        
+        # More aggressive disk space cleanup
+        echo "🧹 Performing aggressive disk space cleanup..."
+        
+        # Stop all containers first to free up resources
+        echo "🛑 Stopping all Docker containers..."
+        sudo docker stop $(sudo docker ps -aq) 2>/dev/null || true
+        
+        # Remove all stopped containers
+        echo "🗑️ Removing stopped containers..."
+        sudo docker container prune -f || true
+        
+        # Remove all unused images (not just dangling ones)
+        echo "🗑️ Removing unused Docker images..."
+        sudo docker image prune -af || true
+        
+        # Remove all unused networks
+        echo "🗑️ Removing unused Docker networks..."
+        sudo docker network prune -f || true
+        
+        # Remove all unused volumes
+        echo "🗑️ Removing unused Docker volumes..."
+        sudo docker volume prune -f || true
+        
+        # Complete system prune with volumes
+        echo "🗑️ Performing complete Docker system cleanup..."
+        sudo docker system prune -af --volumes || true
+        
+        # Clean package manager cache
+        echo "🗑️ Cleaning package manager cache..."
+        sudo apt-get clean || true
+        sudo apt-get autoclean || true
+        sudo apt-get autoremove -y || true
+        
+        # Clean temporary files and logs
+        echo "🗑️ Cleaning temporary files..."
+        sudo rm -rf /tmp/* || true
+        sudo rm -rf /var/tmp/* || true
+        sudo rm -rf /var/lib/apt/lists/* || true
+        sudo rm -rf /var/cache/apt/* || true
+        
+        # Clean log files older than 7 days
+        echo "🗑️ Cleaning old log files..."
+        sudo find /var/log -type f -name "*.log" -mtime +7 -delete 2>/dev/null || true
+        sudo find /var/log -type f -name "*.gz" -mtime +7 -delete 2>/dev/null || true
+        
+        # Clean up any node_modules or build artifacts that might be left
+        echo "🗑️ Cleaning build artifacts..."
+        sudo find /home -name "node_modules" -type d -exec rm -rf {} + 2>/dev/null || true
+        sudo find /home -name "dist" -type d -exec rm -rf {} + 2>/dev/null || true
+        sudo find /home -name ".cache" -type d -exec rm -rf {} + 2>/dev/null || true
+        
+        echo "💾 Disk space after aggressive cleanup:"
+        df -h
+        
+        # Check if we have enough space (at least 2GB free)
+        available_space=$(df / | tail -1 | awk '{print $4}')
+        if [ "$available_space" -lt 2097152 ]; then
+          echo "⚠️ Warning: Less than 2GB free space available. Consider increasing disk size."
+          echo "Available space: ${available_space}KB"
+        else
+          echo "✅ Sufficient disk space available: ${available_space}KB"
+        fi
+        
+        # Configure AWS CLI on EC2
+        echo "🔧 Configuring AWS CLI..."
+        aws configure set region us-east-1
+        aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+        aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+        
+        # Login to ECR
+        echo "🔐 Logging into ECR..."
+        aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin 135878023409.dkr.ecr.us-east-1.amazonaws.com
+        
+        # Pull latest images one at a time to reduce memory pressure
+        echo "📥 Pulling backend image..."
+        if ! sudo docker pull 135878023409.dkr.ecr.us-east-1.amazonaws.com/hospital-backend:latest; then
+          echo "❌ Failed to pull backend image. Checking disk space..."
+          df -h
+          exit 1
+        fi
+        
+        echo "📥 Pulling frontend image..."
+        if ! sudo docker pull 135878023409.dkr.ecr.us-east-1.amazonaws.com/hospital-frontend:latest; then
+          echo "❌ Failed to pull frontend image. Checking disk space..."
+          df -h
+          exit 1
+        fi
+        
+        echo "✅ All images pulled successfully"
+        
+        # Stop and remove old containers (except database)
+        echo "🛑 Stopping old containers..."
+        sudo docker stop hospital-backend hospital-frontend nginx-proxy 2>/dev/null || true
+        sudo docker rm hospital-backend hospital-frontend nginx-proxy 2>/dev/null || true
+        
+        # Clean up any orphaned containers after stopping
+        echo "🗑️ Cleaning up orphaned containers..."
+        sudo docker container prune -f || true
+        
+        # Create hospital network if it doesn't exist
+        echo "🌐 Creating hospital network..."
+        sudo docker network create hospital-network 2>/dev/null || true
+        
+        # Start PostgreSQL database if not running
+        echo "🗄️ Starting PostgreSQL database..."
+        if ! sudo docker ps | grep -q hospital-postgres; then
+          # Remove any existing container first
+          sudo docker stop hospital-postgres 2>/dev/null || true
+          sudo docker rm hospital-postgres 2>/dev/null || true
+          sudo docker volume rm hospital-postgres-data 2>/dev/null || true
+          
+          echo "🔄 Creating fresh PostgreSQL container..."
+          sudo docker run -d \
+            --name hospital-postgres \
+            --network hospital-network \
+            --network-alias postgres \
+            --restart unless-stopped \
+            -e POSTGRES_DB=hospital_db \
+            -e POSTGRES_USER=postgres \
+            -e POSTGRES_PASSWORD=postgres \
+            postgres:13
+            
+          echo "⏳ Waiting for PostgreSQL to initialize..."
+          sleep 30
+          
+          # Wait for PostgreSQL to be ready
+          echo "🔍 Checking PostgreSQL readiness..."
+          for i in {1..15}; do
+            if sudo docker exec hospital-postgres pg_isready -U postgres -d hospital_db > /dev/null 2>&1; then
+              echo "✅ PostgreSQL is ready"
+              break
+            fi
+            echo "⏳ Waiting for PostgreSQL... (attempt $i/15)"
+            sleep 5
+          done
+        else
+          echo "✅ PostgreSQL is already running"
+          # Ensure existing container has the postgres alias
+          sudo docker network disconnect hospital-network hospital-postgres 2>/dev/null || true
+          sudo docker network connect --alias postgres hospital-network hospital-postgres 2>/dev/null || true
+        fi
+        
+        # Start new backend container
+        echo "🔄 Starting new backend container..."
+        
+        # Create directory for ChromaDB persistence
+        sudo mkdir -p /var/lib/hospital-chromadb
+        sudo chmod 777 /var/lib/hospital-chromadb
+        echo "📂 Created ChromaDB data directory"
+        
+        sudo docker run -d \
+          --name hospital-backend \
+          --network hospital-network \
+          --restart unless-stopped \
+          -v /var/lib/hospital-chromadb:/app/medical_knowledge_db \
+          -e DATABASE_URL="postgresql://postgres:postgres@postgres:5432/hospital_db" \
+          -e SMTP_SERVER="smtp.gmail.com" \
+          -e SMTP_PORT="587" \
+          -e EMAIL_USERNAME="$EMAIL_USERNAME" \
+          -e EMAIL_PASSWORD="$EMAIL_PASSWORD" \
+          -e EMAIL_FROM_NAME="$EMAIL_FROM_NAME" \
+          -e EMAIL_FROM_ADDRESS="$EMAIL_FROM_ADDRESS" \
+          -e VITE_OPENAI_API_KEY="$VITE_OPENAI_API_KEY" \
+          -e OPENAI_API_KEY="$VITE_OPENAI_API_KEY" \
+          135878023409.dkr.ecr.us-east-1.amazonaws.com/hospital-backend:latest
+        
+        # Start new frontend container
+        echo "🔄 Starting new frontend container..."
+        sudo docker run -d \
+          --name hospital-frontend \
+          --network hospital-network \
+          --restart unless-stopped \
+          135878023409.dkr.ecr.us-east-1.amazonaws.com/hospital-frontend:latest
+        
+        # Setup nginx proxy for routing
+        echo "🌐 Setting up nginx proxy..."
+        
+        # Create nginx configuration
+        cat > /tmp/nginx.conf << 'NGINXEOF'
+        events {
+            worker_connections 1024;
+        }
+        
+        http {
+            upstream frontend {
+                server hospital-frontend:3000;
+            }
+            
+            upstream backend {
+                server hospital-backend:8000;
+            }
+            
+            server {
+                listen 80;
+                
+                # Add CORS headers
+                add_header 'Access-Control-Allow-Origin' '*' always;
+                add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
+                add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization' always;
+                
+                # Health endpoint (route to backend)
+                location /health {
+                    proxy_pass http://backend;
+                    proxy_set_header Host $host;
+                    proxy_set_header X-Real-IP $remote_addr;
+                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                    proxy_set_header X-Forwarded-Proto $scheme;
+                }
+                
+                # API routes (route to backend)
+                location /api/ {
+                    proxy_pass http://backend;
+                    proxy_set_header Host $host;
+                    proxy_set_header X-Real-IP $remote_addr;
+                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                    proxy_set_header X-Forwarded-Proto $scheme;
+                }
+                
+                # Tools routes (route to backend) - CRITICAL for MCP server
+                location /tools/ {
+                    proxy_pass http://backend;
+                    proxy_set_header Host $host;
+                    proxy_set_header X-Real-IP $remote_addr;
+                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                    proxy_set_header X-Forwarded-Proto $scheme;
+                }
+                
+                # PDF and file downloads (route to backend with special headers)
+                location ~ \.(pdf|doc|docx|xls|xlsx)$ {
+                    proxy_pass http://backend;
+                    proxy_set_header Host $host;
+                    proxy_set_header X-Real-IP $remote_addr;
+                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                    proxy_set_header X-Forwarded-Proto $scheme;
+                    # Special headers for file downloads
+                    proxy_buffering off;
+                    proxy_read_timeout 300s;
+                    proxy_send_timeout 300s;
+                }
+                
+                # Uploads directory (route to backend for file serving)
+                location /uploads/ {
+                    proxy_pass http://backend;
+                    proxy_set_header Host $host;
+                    proxy_set_header X-Real-IP $remote_addr;
+                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                    proxy_set_header X-Forwarded-Proto $scheme;
+                }
+                
+                # Docs routes (route to backend)
+                location /docs {
+                    proxy_pass http://backend;
+                    proxy_set_header Host $host;
+                    proxy_set_header X-Real-IP $remote_addr;
+                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                    proxy_set_header X-Forwarded-Proto $scheme;
+                }
+                
+                # OpenAPI JSON (route to backend)
+                location /openapi.json {
+                    proxy_pass http://backend;
+                    proxy_set_header Host $host;
+                    proxy_set_header X-Real-IP $remote_addr;
+                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                    proxy_set_header X-Forwarded-Proto $scheme;
+                }
+                
+                # All other routes (route to frontend)
+                location / {
+                    proxy_pass http://frontend;
+                    proxy_set_header Host $host;
+                    proxy_set_header X-Real-IP $remote_addr;
+                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                    proxy_set_header X-Forwarded-Proto $scheme;
+                }
+            }
+        }
+        NGINXEOF
+        
+        # Stop and remove existing nginx proxy if it exists
+        sudo docker stop nginx-proxy 2>/dev/null || true
+        sudo docker rm nginx-proxy 2>/dev/null || true
+        
+        # Start nginx proxy container
+        echo "🔄 Starting nginx proxy..."
+        sudo docker run -d \
+          --name nginx-proxy \
+          --network hospital-network \
+          --restart unless-stopped \
+          -p 80:80 \
+          nginx:alpine
+        
+        # Copy nginx configuration to container
+        sudo docker cp /tmp/nginx.conf nginx-proxy:/etc/nginx/nginx.conf
+        
+        # Reload nginx configuration
+        sudo docker exec nginx-proxy nginx -s reload
+        
+        # Wait for containers to be healthy
+        echo "⏳ Waiting for containers to start..."
+        sleep 30
+        
+        # Simple deployment verification
+        echo "🔍 Verifying deployment..."
+        
+        # Check container status
+        echo "📋 Container status:"
+        sudo docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+        
+        # Simple health check - just verify nginx can reach backend
+        echo "🚀 Testing API health endpoint..."
+        for i in {1..5}; do
+            if curl -s http://localhost/health | grep -q "healthy"; then
+                echo "✅ Deployment successful - API is responding"
+                break
+            else
+                echo "⏳ Waiting for API... attempt $i/5"
+                sleep 10
+                if [ $i -eq 5 ]; then
+                    echo "⚠️ API not responding yet, but containers are running"
+                    echo "🔍 Container logs:"
+                    sudo docker logs hospital-backend --tail 5 2>/dev/null || true
+                    echo "🎯 Deployment completed - manual verification may be needed"
+                fi
+            fi
+        done
+        
+        echo "🎉 Deployment completed!"
+        echo " Application URL: http://${{ env.EC2_HOST }}/"
+        
+        echo "🧪 Verifying PDF functionality..."
+        sleep 5
+        
+        # Test PDF dependencies in deployed backend
+        sudo docker exec hospital-backend python -c "
+        try:
+            from reportlab.lib.pagesizes import A4
+            from reportlab.platypus import SimpleDocTemplate, Paragraph
+            from reportlab.lib.styles import getSampleStyleSheet
+            import markdown2
+            
+            doc = SimpleDocTemplate('/tmp/deploy_test.pdf', pagesize=A4)
+            styles = getSampleStyleSheet()
+            story = [Paragraph('Deployment PDF Test Success', styles['Title'])]
+            doc.build(story)
+            
+            import os
+            if os.path.exists('/tmp/deploy_test.pdf'):
+                size = os.path.getsize('/tmp/deploy_test.pdf')
+                print(f'✅ PDF verification passed ({size} bytes)')
+                os.remove('/tmp/deploy_test.pdf')
+            else:
+                print('❌ PDF creation failed in deployment')
+                exit(1)
+        except Exception as e:
+            print(f'❌ PDF verification failed: {e}')
+            exit(1)
+        " && echo "✅ PDF functionality verified in deployment" || echo "⚠️ PDF verification failed - check logs"
+        
+        echo "🤖 Verifying AI Clinical Assistant functionality..."
+        sleep 2
+        
+        # Test OpenAI API key and AI Clinical Assistant in deployed backend
+        sudo docker exec hospital-backend python -c "
+        try:
+            import os
+            api_key = os.getenv('VITE_OPENAI_API_KEY')
+            if api_key and api_key.startswith('sk-'):
+                print('✅ OpenAI API key is properly configured')
+                
+                # Check ChromaDB directory permissions
+                chromadb_path = '/app/medical_knowledge_db'
+                if os.path.exists(chromadb_path):
+                    if os.access(chromadb_path, os.W_OK):
+                        print(f'✅ ChromaDB directory writable: {chromadb_path}')
+                    else:
+                        print(f'⚠️ ChromaDB directory not writable: {chromadb_path}')
+                else:
+                    print(f'⚠️ ChromaDB directory not found: {chromadb_path}')
+                
+                # Test AI Clinical Assistant initialization
+                from agents.ai_clinical_assistant_agent import AIClinicalAssistantAgent
+                agent = AIClinicalAssistantAgent()
+                print('✅ AI Clinical Assistant initialized successfully')
+                
+                # Check if ChromaDB was properly initialized
+                if hasattr(agent, 'chroma_client') and agent.chroma_client:
+                    print('✅ ChromaDB client initialized successfully')
+                else:
+                    print('⚠️ ChromaDB client not initialized - using fallback mode')
+                
+                # Quick test of functionality
+                result = agent.ai_clinical_assistant('Test clinical query for deployment verification')
+                if result and result.get('success'):
+                    print('✅ AI Clinical Assistant is functional')
+                else:
+                    print('⚠️ AI Clinical Assistant test returned unexpected result')
+            else:
+                print('❌ OpenAI API key not found or invalid format')
+                exit(1)
+        except Exception as e:
+            print(f'⚠️ AI Clinical Assistant verification failed: {e}')
+            print('Note: This may be due to rate limits or network issues, but configuration appears correct')
+        " && echo "✅ AI Clinical Assistant functionality verified" || echo "⚠️ AI verification failed - check logs but deployment may still be successful"
+        EOF
+        
+        chmod +x deploy-to-ec2.sh
+
+    - name: Deploy to EC2
+      env:
+        PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+        HOST: ${{ env.EC2_HOST }}
+        USER: ec2-user
+        EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
+        EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+        EMAIL_FROM_NAME: ${{ secrets.EMAIL_FROM_NAME }}
+        EMAIL_FROM_ADDRESS: ${{ secrets.EMAIL_FROM_ADDRESS }}
+        VITE_OPENAI_API_KEY: ${{ secrets.VITE_OPENAI_API_KEY }}
+      run: |
+        echo "🔐 Setting up SSH..."
+        echo "$PRIVATE_KEY" > private_key.pem
+        chmod 600 private_key.pem
+        
+        echo "📁 Copying deployment script to EC2..."
+        scp -i private_key.pem -o StrictHostKeyChecking=no deploy-to-ec2.sh $USER@$HOST:~/
+        
+        echo "🚀 Executing deployment on EC2..."
+        ssh -i private_key.pem -o StrictHostKeyChecking=no $USER@$HOST "
+          export AWS_ACCESS_KEY_ID='$AWS_ACCESS_KEY_ID'
+          export AWS_SECRET_ACCESS_KEY='$AWS_SECRET_ACCESS_KEY'
+          export AWS_DEFAULT_REGION='$AWS_REGION'
+          export EMAIL_USERNAME='$EMAIL_USERNAME'
+          export EMAIL_PASSWORD='$EMAIL_PASSWORD'
+          export EMAIL_FROM_NAME='$EMAIL_FROM_NAME'
+          export EMAIL_FROM_ADDRESS='$EMAIL_FROM_ADDRESS'
+          export VITE_OPENAI_API_KEY='$VITE_OPENAI_API_KEY'
+          chmod +x ~/deploy-to-ec2.sh
+          ~/deploy-to-ec2.sh
+        "
+        
+        echo "🧹 Cleaning up..."
+        rm -f private_key.pem
+
+    - name: Final health check
+      run: |
+        echo "🔍 Final health check..."
+        sleep 10
+        if curl -f http://${{ env.EC2_HOST }}/health; then
+          echo ""
+          echo "🎉 ✅ DEPLOYMENT SUCCESSFUL! ✅ 🎉"
+          echo "🌐 Your Hospital Management System is live at: http://${{ env.EC2_HOST }}/"
+          echo "🏥 Health API: http://${{ env.EC2_HOST }}/health"
+          echo "📚 Documentation: http://${{ env.EC2_HOST }}/docs"
+        else
+          echo "❌ Final health check failed"
+          exit 1
+        fi

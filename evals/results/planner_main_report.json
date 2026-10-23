@@ -1,0 +1,55 @@
+{
+  "A": {
+    "n": 238,
+    "attempted": 238,
+    "transport_failures": 0,
+    "completion_rate": 1.0,
+    "counts": {
+      "CORRECT_CALL": 87,
+      "SUBSTITUTION": 27,
+      "CORRECT_ABSTENTION": 91,
+      "WRONG_ARGUMENTS": 19,
+      "WRONG_TOOL": 10,
+      "MISSING_CALL": 4
+    },
+    "overall_correct": 178,
+    "accuracy": 0.7479,
+    "unsafe_proposal_rate": 0.0,
+    "unsafe_proposals": 0,
+    "proposals_made": 143,
+    "over_abstention_rate": 0.0333,
+    "over_abstentions": 4,
+    "call_expected": 120,
+    "correct_abstention_rate": 0.7712,
+    "substitution_rate": 0.6429,
+    "substitutions": 18,
+    "capability_cases": 28,
+    "latency_p50_ms": 3801,
+    "prompt_tokens_p50": 529
+  },
+  "B": {
+    "n": 58,
+    "attempted": 92,
+    "transport_failures": 34,
+    "completion_rate": 0.6304,
+    "counts": {
+      "CORRECT_CALL": 48,
+      "SUBSTITUTION": 2,
+      "CORRECT_ABSTENTION": 8
+    },
+    "overall_correct": 56,
+    "accuracy": 0.9655,
+    "unsafe_proposal_rate": 0.0,
+    "unsafe_proposals": 0,
+    "proposals_made": 50,
+    "over_abstention_rate": 0.0,
+    "over_abstentions": 0,
+    "call_expected": 48,
+    "correct_abstention_rate": 0.8,
+    "substitution_rate": 0.0,
+    "substitutions": 0,
+    "capability_cases": 0,
+    "latency_p50_ms": 10540,
+    "prompt_tokens_p50": 1457
+  }
+}
